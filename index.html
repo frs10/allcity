@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All City King - Graffiti Territory Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Lobby Screen -->
+    <div id="lobby-screen" class="screen active">
+        <div class="container">
+            <h1 class="game-title">ALL CITY KING</h1>
+            <p class="subtitle">90s NYC Graffiti Territory Game</p>
+
+            <div class="lobby-options">
+                <button id="host-btn" class="btn btn-primary">HOST SPIL</button>
+                <button id="join-btn" class="btn btn-secondary">JOIN SPIL</button>
+            </div>
+
+            <!-- Host Panel -->
+            <div id="host-panel" class="panel hidden">
+                <h2>Host Nyt Spil</h2>
+                <div class="game-code">
+                    <label>Spil Kode:</label>
+                    <div id="game-code-display" class="code-display">------</div>
+                </div>
+                <div class="crew-setup">
+                    <input type="text" id="host-crew-name" placeholder="Crew Navn" maxlength="15">
+                    <label>Vælg Farve:</label>
+                    <div class="color-picker">
+                        <button class="color-option" data-color="#FF0066" style="background: #FF0066;"></button>
+                        <button class="color-option" data-color="#00FF88" style="background: #00FF88;"></button>
+                        <button class="color-option" data-color="#FFDD00" style="background: #FFDD00;"></button>
+                        <button class="color-option" data-color="#00BBFF" style="background: #00BBFF;"></button>
+                        <button class="color-option" data-color="#FF4400" style="background: #FF4400;"></button>
+                        <button class="color-option" data-color="#AA00FF" style="background: #AA00FF;"></button>
+                    </div>
+                    <div id="host-selected-color" class="selected-color"></div>
+                </div>
+                <button id="create-game-btn" class="btn btn-primary">OPRET SPIL</button>
+            </div>
+
+            <!-- Join Panel -->
+            <div id="join-panel" class="panel hidden">
+                <h2>Join Spil</h2>
+                <input type="text" id="join-code-input" placeholder="6-cifret kode" maxlength="6">
+                <button id="connect-btn" class="btn btn-primary">FORBIND</button>
+            </div>
+
+            <!-- Waiting Room -->
+            <div id="waiting-room" class="panel hidden">
+                <h2>Venter på Spillere</h2>
+                <div class="game-code">
+                    <label>Spil Kode:</label>
+                    <div id="waiting-game-code" class="code-display">------</div>
+                </div>
+                <div id="players-list" class="players-list"></div>
+                <button id="start-game-btn" class="btn btn-success hidden">START SPIL</button>
+            </div>
+
+            <!-- Crew Setup (for joiners) -->
+            <div id="crew-setup-panel" class="panel hidden">
+                <h2>Vælg Dit Crew</h2>
+                <input type="text" id="crew-name-input" placeholder="Crew Navn" maxlength="15">
+                <label>Vælg Farve:</label>
+                <div id="available-colors" class="color-picker"></div>
+                <button id="confirm-crew-btn" class="btn btn-primary">BEKRÆFT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen">
+        <div class="game-layout">
+            <!-- Left Sidebar -->
+            <aside class="sidebar-left">
+                <div class="scoreboard">
+                    <h2>SCOREBOARD</h2>
+                    <div id="player-scores"></div>
+                </div>
+
+                <div class="action-feed">
+                    <h3>ACTION FEED</h3>
+                    <div id="feed-content"></div>
+                </div>
+            </aside>
+
+            <!-- Main Game Area -->
+            <main class="game-area">
+                <div class="current-player-indicator">
+                    <div id="current-turn-display">
+                        <span id="current-player-name"></span>'s TUR
+                    </div>
+                </div>
+
+                <div id="game-board" class="game-board"></div>
+
+                <!-- Police Tracker -->
+                <div id="police-tracker" class="police-tracker">
+                    <span>🚔 THE ONE-TIME:</span>
+                    <span id="police-position">Patruljerer...</span>
+                </div>
+            </main>
+
+            <!-- Right Sidebar -->
+            <aside class="sidebar-right">
+                <div class="resource-display">
+                    <h3>DINE RESSOURCER</h3>
+                    <div id="player-resources">
+                        <div class="resource-item">
+                            <span class="label">Points:</span>
+                            <span id="player-points" class="value">100</span>
+                        </div>
+                        <div class="resource-item">
+                            <span class="label">Hex Ejet:</span>
+                            <span id="player-hexes" class="value">0</span>
+                        </div>
+                        <div class="resource-item">
+                            <span class="label">Næste Indkomst:</span>
+                            <span id="player-income" class="value">+20</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions-panel">
+                    <h3>GRAFFITI AKTIONER</h3>
+                    <button class="action-btn" id="action-tag" data-action="tag" data-cost="20">
+                        <span class="action-name">TAG</span>
+                        <span class="action-cost">20 pts</span>
+                        <span class="action-damage">1 DMG</span>
+                    </button>
+                    <button class="action-btn" id="action-throwup" data-action="throwup" data-cost="50">
+                        <span class="action-name">THROW-UP</span>
+                        <span class="action-cost">50 pts</span>
+                        <span class="action-damage">3 DMG</span>
+                    </button>
+                    <button class="action-btn" id="action-burner" data-action="burner" data-cost="150">
+                        <span class="action-name">BURNER</span>
+                        <span class="action-cost">150 pts</span>
+                        <span class="action-damage">10 DMG • 2 TURE</span>
+                    </button>
+                </div>
+
+                <div id="hex-info" class="hex-info">
+                    <h3>HEX INFO</h3>
+                    <div id="hex-details">Klik på en hex...</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Victory Screen -->
+    <div id="victory-screen" class="screen overlay">
+        <div class="victory-container">
+            <h1 class="victory-title">👑 ALL CITY KING 👑</h1>
+            <div id="winner-display"></div>
+            <div id="victory-stats"></div>
+            <button id="new-game-btn" class="btn btn-primary">NYT SPIL</button>
+        </div>
+    </div>
+
+    <!-- Busted Screen -->
+    <div id="busted-overlay" class="screen overlay hidden">
+        <div class="busted-container">
+            <h1 class="busted-title">BUSTED!</h1>
+            <p id="busted-message"></p>
+            <div id="busted-countdown"></div>
+        </div>
+    </div>
+
+    <!-- Beef Alert -->
+    <div id="beef-alert" class="beef-alert hidden">
+        <h2>🥩 BEEF ALERT 🥩</h2>
+        <p id="beef-message"></p>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
